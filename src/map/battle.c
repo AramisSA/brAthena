@@ -7212,9 +7212,19 @@ static const struct battle_data {
 	{ "save_body_style",                    &battle_config.save_body_style,                 0,      0,      1,              },
 	{ "reserved_costume_id",                &battle_config.reserved_costume_id,             999998, 0,      INT_MAX,        },
 	/**
-	 * Configuração para a habilidade de revestimento dos criadores e alquimistas. [CarlosHenrq]
-	 */
+	 * brAthena
+	 **/
+	// Configuração para a habilidade de revestimento dos criadores e alquimistas. [CarlosHenrq]
 	{ "creator.fullprotect",				&battle_config.creator_fullprotect,				0,		0,		2,				},
+	// Configuração para bloquear jogadores de abrir chat/vendas na mesma celula. [CarlosHenrq]
+	{ "vending_chat_block_same_cell",		&battle_config.vending_chat_block_same_cell,    0,      0,      1,				},
+	// Configuração para bloquear jogadores de abrir chat/loja próximos uns aos outros. [CarlosHenrq]
+	{ "vending_chat_block_range_check_cells",		&battle_config.vending_chat_block_range_check_cells,    0,      0,     10,				},
+	{ "vending_chat_block_range_count_players",		&battle_config.vending_chat_block_range_count_players,  5,      0,     30,				},
+	// Block Refine - [Orce]
+	{ "get_refine",                         &battle_config.get_refine,                      0,      1,      100,            },
+	// Configuração para habilidades de remover armas. [Sir Will]
+	{ "strip_weapon",                       &battle_config.strip_weapon,                    0,      0,      1,              },
 };
 #ifndef STATS_OPT_OUT
 /**

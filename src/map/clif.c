@@ -1947,6 +1947,9 @@ void clif_selllist(struct map_session_data *sd)
 			if( sd->status.inventory[i].bound && !pc_can_give_bound_items(sd))
 				continue; // Don't allow sale of bound items
 
+			if( sd->status.inventory[i].refine > battle_config.get_refine )
+				continue;
+			
 			val=sd->inventory_data[i]->value_sell;
 			if( val < 0 )
 				continue;
@@ -10631,6 +10634,21 @@ void clif_parse_CreateChatRoom(int fd, struct map_session_data* sd)
 	if( len <= 0 )
 		return; // invalid input
 
+	// Verifica se já existe uma loja/chat em aberto. Caso esteja, não permite que seja
+	//  aberto uma segunda loja/chat sobre a outra.
+	if(battle_config.vending_chat_block_same_cell && (vending->cell_has_taken(sd) || chat->cell_has_taken(sd)))
+	{
+		clif->message(sd->fd, msg_sd(sd, 537));
+		return;
+	}
+
+	// Configuração para bloquear jogadores de abrir chat/loja próximos uns aos outros. [CarlosHenrq]
+	if(pc->too_many_vending_chat_near(sd))
+	{
+		clif->message(sd->fd, msg_sd(sd, 536));
+		return;
+	}
+
 	safestrncpy(s_password, password, CHATROOM_PASS_SIZE);
 	safestrncpy(s_title, title, min(len+1,CHATROOM_TITLE_SIZE)); //NOTE: assumes that safestrncpy will not access the len+1'th byte
 
@@ -12672,6 +12690,30 @@ void clif_parse_OpenVending(int fd, struct map_session_data* sd) {
 	}
 	if (map->getcell(sd->bl.m, &sd->bl, sd->bl.x, sd->bl.y, CELL_CHKNOVENDING)) {
 		clif->message (sd->fd, msg_sd(sd,204)); // "You can't open a shop on this cell."
+		return;
+	}
+
+	// Este teste já é realizado em skill.c, mas somente quando a skill é executada,
+	// Caso o player executasse a skill longe do NPC, andasse para o npc e confirmasse a loja
+	//  ia abrir e funcionar corretamente a loja. [CarlosHenrq, 2016-08-17]
+	if(npc->isnear(&sd->bl))
+	{
+		clif->skill_fail(sd,1,USESKILL_FAIL_THERE_ARE_NPC_AROUND,0);
+		return;
+	}
+
+	// Verifica se já existe uma loja/chat em aberto. Caso esteja, não permite que seja
+	//  aberto uma segunda loja/chat sobre a outra.
+	if(battle_config.vending_chat_block_same_cell && (vending->cell_has_taken(sd) || chat->cell_has_taken(sd)))
+	{
+		clif->message(sd->fd, msg_sd(sd, 537));
+		return;
+	}
+
+	// Configuração para bloquear jogadores de abrir chat/loja próximos uns aos outros. [CarlosHenrq]
+	if(pc->too_many_vending_chat_near(sd))
+	{
+		clif->message(sd->fd, msg_sd(sd, 536));
 		return;
 	}
 

@@ -1,14 +1,8 @@
 --  _________________________________________________________________________
--- /                                                                         \
--- |                  _           _   _   _                                  |
--- |                 | |__  _ __ / \ | |_| |__   ___ _ __   __ _             |
--- |                 | '_ \| '__/ _ \| __| '_ \ / _ \ '_ \ / _` |            |
--- |                 | |_) | | / ___ \ |_| | | |  __/ | | | (_| |            |
--- |                 |_.__/|_|/_/   \_\__|_| |_|\___|_| |_|\__,_|            |
 -- |                                                                         |
--- |                       brAthena © 2015 - Banco de Dados                  |
+-- |                       brAthena © 2016 - Banco de Dados                  |
 -- |             Contém as tabelas de logs para ações no emulador            |
--- \_________________________________________________________________________/
+-- |_________________________________________________________________________|
 --
 
 --
@@ -56,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `buyingstore_log` (
   `Vendor_Name` varchar(23) NOT NULL DEFAULT '',
   `Vendor_IP` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `Amount` int(11) unsigned NOT NULL DEFAULT '0',
   `Unit_Cost` int(11) NOT NULL DEFAULT '0',
   `Total_Cost` int(11) NOT NULL DEFAULT '0',
@@ -83,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `card_log` (
   `CharName` varchar(23) NOT NULL DEFAULT '',
   `CharacterIPaddr` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `Type` enum('Insert','Removed') NOT NULL DEFAULT 'Insert',
   `Slot` smallint(1) NOT NULL DEFAULT '0',
@@ -113,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `cashitemshop` (
   `PosY` smallint(4) NOT NULL DEFAULT '0',
   `NpcName` varchar(51) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemCount` int(11) NOT NULL DEFAULT '0',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
@@ -163,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `guild_storage_log` (
   `CharName` varchar(23) NOT NULL DEFAULT '',
   `CharacterIPaddr` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `Amount` int(11) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
@@ -187,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `itemconsume_log` (
   `CharName` varchar(23) NOT NULL DEFAULT '',
   `CharacterIPaddr` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `Amount` int(11) unsigned NOT NULL DEFAULT '0',
   `Type_` varchar(20) NOT NULL DEFAULT ''
@@ -207,10 +201,10 @@ CREATE TABLE IF NOT EXISTS `itemproduce_log` (
   `CharName` varchar(23) NOT NULL DEFAULT '',
   `CharacterIPaddr` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `Amount` int(11) unsigned NOT NULL DEFAULT '0',
-  `Type_` enum('Fail Refine','Craft Requirement','Crafting Sucess','Cooking','Arrow Create','Ele.Analysis','Sucess Refine','Downgrade') NOT NULL DEFAULT 'Craft Requirement'
+  `Amount` INT(11) NOT NULL DEFAULT '0',
+  `Type_` enum('Falha ao refinar','Item para refinar','Item para criar','Falha ao criar','Sucesso ao criar','Cozinhar','Flecha criada','Ele.Analysis','Sucesso ao refinar','Downgrade') NOT NULL DEFAULT 'Item para criar'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
@@ -230,7 +224,7 @@ CREATE TABLE IF NOT EXISTS `item_get_removelog` (
   `CharName` varchar(30) NOT NULL DEFAULT '',
   `CharIP` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(23) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `Amount` int(11) NOT NULL DEFAULT '0',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
@@ -266,7 +260,7 @@ CREATE TABLE IF NOT EXISTS `mail_log` (
   `DestName` varchar(23) NOT NULL DEFAULT '',
   `Zeny` int(11) unsigned NOT NULL DEFAULT '0',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `Amount` int(11) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
@@ -306,7 +300,7 @@ CREATE TABLE IF NOT EXISTS `npcshop_log` (
   `Player_PosY` smallint(4) NOT NULL DEFAULT '0',
   `Player_Action` enum('Compra','Venda') NOT NULL DEFAULT 'Compra',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `Amount` int(11) unsigned NOT NULL DEFAULT '0',
   `Unit_Cost` int(11) NOT NULL DEFAULT '0',
   `Total_Cost` int(11) NOT NULL DEFAULT '0',
@@ -333,7 +327,7 @@ CREATE TABLE IF NOT EXISTS `pickdrop_log` (
   `IP` varchar(20) NOT NULL DEFAULT '',
   `Source` enum('Player','Monster') NOT NULL DEFAULT 'Player',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(23) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `Amount` int(11) NOT NULL DEFAULT '0',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
@@ -359,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `storage_log` (
   `CharName` varchar(23) NOT NULL DEFAULT '',
   `CharacterIPaddr` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `Amount` int(11) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
@@ -390,7 +384,7 @@ CREATE TABLE IF NOT EXISTS `trade_log` (
   `Zeny` int(11) NOT NULL DEFAULT '0',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
   `ItemCount` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `ItemSerial` bigint(20) unsigned NOT NULL DEFAULT '0',
   `ItemSlot1` smallint(11) NOT NULL DEFAULT '0',
   `ItemSlot2` smallint(11) NOT NULL DEFAULT '0',
@@ -418,7 +412,7 @@ CREATE TABLE IF NOT EXISTS `vending_log` (
   `Vendor_Status` enum('Online','Autotrade') NOT NULL DEFAULT 'Online',
   `Vendor_IP` varchar(20) NOT NULL DEFAULT '',
   `ItemID` int(11) unsigned NOT NULL DEFAULT '0',
-  `ItemName` varchar(24) NOT NULL DEFAULT '',
+  `ItemName` varchar(50) NOT NULL DEFAULT '',
   `Amount` int(11) NOT NULL DEFAULT '0',
   `Unit_Cost` int(11) NOT NULL DEFAULT '0',
   `Total_Cost` int(11) NOT NULL DEFAULT '0',

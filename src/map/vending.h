@@ -20,6 +20,7 @@
 #ifndef MAP_VENDING_H
 #define MAP_VENDING_H
 
+#include "map/map.h" // struct block_list, CHATROOM_TITLE_SIZE
 #include "common/cbasetypes.h"
 #include "common/db.h"
 
@@ -45,6 +46,16 @@ struct vending_interface {
 	void (*purchase) (struct map_session_data* sd, int aid, unsigned int uid, const uint8* data, int count);
 	bool (*search) (struct map_session_data* sd, unsigned short nameid);
 	bool (*searchall) (struct map_session_data* sd, const struct s_search_store_search* s);
+
+	// Testes para contagem de vendas [CarlosHenrq]
+	int (*count_sub) (struct block_list *bl,va_list ap);
+	int (*count_map) (int16 m);
+	int (*count_area) (int16 m, int16 x0, int16 y0, int16 x1, int16 y1);
+	int (*count_cell) (int16 m, int16 x, int16 y);
+	int (*count_range) (struct block_list* bl, int range);
+
+	// Verifica se a celula já possui venda em aberto.
+	bool (*cell_has_taken) (struct map_session_data* sd);
 };
 
 struct vending_interface *vending;

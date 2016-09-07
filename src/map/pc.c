@@ -4708,6 +4708,11 @@ int pc_dropitem(struct map_session_data *sd,int n,int amount)
 		)
 		return 0;
 
+	if(sd->status.inventory[n].refine > battle_config.get_refine) {
+		clif->message(sd->fd,msg_sd(sd,3004));
+		return 0;
+	}
+		
 	if( map->list[sd->bl.m].flag.nodrop ) {
 		clif->message (sd->fd, msg_sd(sd,271));
 		return 0; //Can't drop items in nodrop mapflag maps.
@@ -5155,6 +5160,10 @@ int pc_cart_additem(struct map_session_data *sd,struct item *item_data,int amoun
 
 	if(item_data->nameid <= 0 || amount <= 0)
 		return 1;
+	if(item_data->refine > battle_config.get_refine){
+		clif->message(sd->fd,msg_sd(sd,3004));
+		return 1;
+	}	
 	data = itemdb->search(item_data->nameid);
 
 	if( data->stack.cart && amount > data->stack.amount )
@@ -11605,6 +11614,39 @@ int pc_have_magnifier(struct map_session_data *sd)
 	return n;
 }
 
+/**
+ * Conta quantas lojas/chat existem ao redor do jogador.
+ *
+ * @param struct map_session_data* sd
+ *
+ * @return int
+ */
+int pc_vending_chat_count_near(struct map_session_data* sd)
+{
+	// Retorna o somatório somente se a configuração estiver ativa.
+	if(battle_config.vending_chat_block_range_check_cells > 0 && battle_config.vending_chat_block_range_count_players > 0)
+		return (vending->count_range(&sd->bl, battle_config.vending_chat_block_range_check_cells)
+						+ chat->count_range(&sd->bl, battle_config.vending_chat_block_range_check_cells));
+
+	return 0;
+}
+
+/**
+ * Testa se existem muitas vendas e lojas próximas ao jogador.
+ *
+ * @param struct map_session_data* sd
+ *
+ * @return Se houver muitos players com chat/loja então retorna verdadeiro.
+ */
+bool pc_too_many_vending_chat_near(struct map_session_data* sd)
+{
+	// Se a configuração tiver ativa, realiza os testes de contagem de venda.
+	if(battle_config.vending_chat_block_range_check_cells > 0 && battle_config.vending_chat_block_range_count_players > 0)
+		return (pc->vending_chat_count_near(sd) >= battle_config.vending_chat_block_range_count_players);
+
+	return false;
+}
+
 void do_final_pc(void) {
 	db_destroy(pc->itemcd_db);
 	pc->at_db->destroy(pc->at_db,pc->autotrade_final);
@@ -11973,4 +12015,8 @@ void pc_defaults(void) {
 	pc->update_idle_time = pc_update_idle_time;
 	
 	pc->have_magnifier = pc_have_magnifier;
+
+	// Configuração para bloquear jogadores de abrir chat/loja próximos uns aos outros. [CarlosHenrq]
+	pc->vending_chat_count_near = pc_vending_chat_count_near;
+	pc->too_many_vending_chat_near = pc_too_many_vending_chat_near;
 }

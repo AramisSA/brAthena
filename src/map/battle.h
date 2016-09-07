@@ -543,10 +543,20 @@ struct Battle_Config {
 	// Costume System [Mhalicot/Rebel/Zephyrus]
 	int reserved_costume_id;
 
-	/**
-	 * Configuração para a habilidade de revestimento total dos criadores. [CarlosHenrq]
-	 */
+	/** brAthena **/
+	// Configuração para a habilidade de revestimento total dos criadores. [CarlosHenrq]
 	int creator_fullprotect;
+	// Configuração para bloquear jogadores de abrir chat/vendas na mesma celula. [CarlosHenrq]
+	int vending_chat_block_same_cell;
+
+	// Configuração para bloquear jogadores de abrir chat/loja próximos uns aos outros. [CarlosHenrq]
+	int vending_chat_block_range_check_cells;
+	int vending_chat_block_range_count_players;
+
+	int get_refine; // Block Refine - [Orce]
+	
+	// Configuração para habilidades de remover armas. [Sir Will]
+	int strip_weapon;
 };
 
 /* criteria for battle_config.idletime_critera */
