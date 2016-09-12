@@ -8899,6 +8899,7 @@ void clif_msgtable_skill(struct map_session_data* sd, uint16 skill_id, int msg_i
 bool clif_process_message(struct map_session_data *sd, int format, char **name_, size_t *namelen_, char **message_, size_t *messagelen_) {
 	char *text, *name, *message;
 	unsigned int packetlen, textlen;
+	char srcmessage[CHAT_SIZE_MAX + 1];
 	size_t namelen, messagelen;
 	int fd = sd->fd;
 
@@ -8963,15 +8964,21 @@ bool clif_process_message(struct map_session_data *sd, int format, char **name_,
 
 		message = name + NAME_LENGTH;
 		messagelen = textlen - NAME_LENGTH; // this should be the message length (w/ zero byte included)
-	}
-
-	if (messagelen != strnlen(message, messagelen)+1) {
+	}	
+ 	#if PACKETVER >= 20151001
+ 		if (message[messagelen - 1] != '\0') {	// Normal Chat Message don't have null terminator's
+ 			safestrncpy(srcmessage, message, textlen);
+ 			message = srcmessage;
+ 			messagelen++;
+ 		}
+ 	#endif
+	if (messagelen != strnlen(message, messagelen) + 1) {
 		// the declared length must match real length
 		ShowWarning("clif_process_message: Received malformed packet from player '%s' (length is incorrect)!\n", sd->status.name);
 		return false;
 	}
 	// verify <message> part of the packet
-	if (message[messagelen-1] != '\0') {
+	if (message[messagelen - 1] != '\0') {
 		// message must be zero-terminated
 		ShowWarning("clif_process_message: Player '%s' sent an unterminated message string!\n", sd->status.name);
 		return false;
@@ -9674,7 +9681,7 @@ void clif_parse_QuitGame(int fd, struct map_session_data *sd) __attribute__((non
 void clif_parse_QuitGame(int fd, struct map_session_data *sd)
 {
 	/* Rovert's prevent logout option fixed [Valaris] */
-	if( !sd->sc.data[SC_CLOAKING] && !sd->sc.data[SC_HIDING] && !sd->sc.data[SC_CHASEWALK] && !sd->sc.data[SC_CLOAKINGEXCEED] && !sd->sc.data[SC__INVISIBILITY] &&
+		if( !sd->sc.data[SC_CLOAKING] && !sd->sc.data[SC_HIDING] && !sd->sc.data[SC_CHASEWALK] && !sd->sc.data[SC_CLOAKINGEXCEED] && !sd->sc.data[SC__INVISIBILITY] && !sd->sc.data[SC_SUHIDE] &&
 		(!battle_config.prevent_logout || DIFF_TICK(timer->gettick(), sd->canlog_tick) > battle_config.prevent_logout) )
 	{
 		sockt->eof(fd);
@@ -9946,7 +9953,7 @@ void clif_parse_Emotion(int fd, struct map_session_data *sd)
 {
 	int emoticon = RFIFOB(fd,packet_db[RFIFOW(fd,0)].pos[0]);
 
-	if (battle_config.basic_skill_check == 0 || pc->checkskill(sd, NV_BASIC) >= 2) {
+	if (battle_config.basic_skill_check == 0 || pc_basicskillcheck(sd, 2) ) {
 		if (emoticon == E_MUTE) {// prevent use of the mute emote [Valaris]
 			clif->skill_fail(sd, 1, USESKILL_FAIL_LEVEL, 1);
 			return;
@@ -10006,7 +10013,8 @@ void clif_parse_ActionRequest_sub(struct map_session_data *sd, int action_type, 
 			sd->sc.data[SC_TRICKDEAD] ||
 			(sd->sc.data[SC_AUTOCOUNTER] && action_type != 0x07) ||
 			 sd->sc.data[SC_BLADESTOP] ||
-			 sd->sc.data[SC_DEEP_SLEEP] )
+			 sd->sc.data[SC_DEEP_SLEEP] ||
+			 sd->sc.data[SC_SUHIDE] )
 			 )
 		return;
 
@@ -10046,7 +10054,7 @@ void clif_parse_ActionRequest_sub(struct map_session_data *sd, int action_type, 
 		}
 		break;
 		case 0x02: // sitdown
-			if (battle_config.basic_skill_check && pc->checkskill(sd, NV_BASIC) < 3) {
+			if (battle_config.basic_skill_check && !pc_basicskillcheck(sd, 3) ) {
 				clif->skill_fail(sd, 1, USESKILL_FAIL_LEVEL, 2);
 				break;
 			}
@@ -10131,7 +10139,7 @@ void clif_parse_Restart(int fd, struct map_session_data *sd) {
 		case 0x01:
 			/* Rovert's Prevent logout option - Fixed [Valaris] */
 			if (!sd->sc.data[SC_CLOAKING] && !sd->sc.data[SC_HIDING] && !sd->sc.data[SC_CHASEWALK]
-			 && !sd->sc.data[SC_CLOAKINGEXCEED] && !sd->sc.data[SC__INVISIBILITY]
+			&& !sd->sc.data[SC_CLOAKINGEXCEED] && !sd->sc.data[SC__INVISIBILITY] && !sd->sc.data[SC_SUHIDE]
 			 && (!battle_config.prevent_logout || DIFF_TICK(timer->gettick(), sd->canlog_tick) > battle_config.prevent_logout)
 			) {
 				//Send to char-server for character selection.
@@ -10321,6 +10329,7 @@ void clif_parse_TakeItem(int fd, struct map_session_data *sd)
 				 sd->sc.data[SC_TRICKDEAD] ||
 				 sd->sc.data[SC_BLADESTOP] ||
 				 sd->sc.data[SC_CLOAKINGEXCEED] ||
+				 sd->sc.data[SC_SUHIDE] ||
 				 pc_ismuted(&sd->sc, MANNER_NOITEM)
 			) )
 			break;
@@ -10618,7 +10627,7 @@ void clif_parse_CreateChatRoom(int fd, struct map_session_data* sd)
 
 	if (pc_ismuted(&sd->sc, MANNER_NOROOM))
 		return;
-	if(battle_config.basic_skill_check && pc->checkskill(sd,NV_BASIC) < 4) {
+	if(battle_config.basic_skill_check && !pc_basicskillcheck(sd, 4) ) {
 		clif->skill_fail(sd,1,USESKILL_FAIL_LEVEL,3);
 		return;
 	}
@@ -10750,7 +10759,7 @@ void clif_parse_TradeRequest(int fd,struct map_session_data *sd) {
 		return;
 	}
 
-	if( battle_config.basic_skill_check && pc->checkskill(sd,NV_BASIC) < 1) {
+	if( battle_config.basic_skill_check && !pc_basicskillcheck(sd, 1) ) {
 		clif->skill_fail(sd,1,USESKILL_FAIL_LEVEL,0);
 		return;
 	}
@@ -11470,6 +11479,10 @@ void clif_parse_NpcStringInput(int fd, struct map_session_data* sd)
 	if( message_len <= 0 )
 		return; // invalid input
 
+	#if PACKETVER >= 20151001
+		message_len++;
+ 	#endif	
+
 	safestrncpy(sd->npc_str, message, min(message_len,CHATBOX_SIZE));
 	npc->scriptcont(sd, npcid, false);
 }
@@ -11806,7 +11819,7 @@ void clif_parse_CreateParty(int fd, struct map_session_data *sd) {
 		clif->message(fd, msg_fd(fd,227));
 		return;
 	}
-	if( battle_config.basic_skill_check && pc->checkskill(sd,NV_BASIC) < 7 ) {
+	if( battle_config.basic_skill_check && !pc_basicskillcheck(sd, 7) ) {
 		clif->skill_fail(sd,1,USESKILL_FAIL_LEVEL,4);
 		return;
 	}
@@ -11826,7 +11839,7 @@ void clif_parse_CreateParty2(int fd, struct map_session_data *sd) {
 		clif->message(fd, msg_fd(fd,227));
 		return;
 	}
-	if( battle_config.basic_skill_check && pc->checkskill(sd,NV_BASIC) < 7 ) {
+	if( battle_config.basic_skill_check && !pc_basicskillcheck(sd, 7) ) {
 		clif->skill_fail(sd,1,USESKILL_FAIL_LEVEL,4);
 		return;
 	}

@@ -13,8 +13,8 @@
 * Copyright (c) Hercules Dev Team                                            *
 * Copyright (c) Athena Dev Teams                                             *
 *                                                                            *
-* Licenciado sob a licença GNU GPL                                           *
-* Para mais informações leia o arquivo LICENSE na raíz do emulador           *
+* Licenciado sob a licenï¿½a GNU GPL                                           *
+* Para mais informaï¿½ï¿½es leia o arquivo LICENSE na raï¿½z do emulador           *
 *****************************************************************************/
 #ifndef MAP_SKILL_H
 #define MAP_SKILL_H
@@ -1378,6 +1378,33 @@ enum e_skill {
 	ALL_FULL_THROTTLE,
 	NC_MAGMA_ERUPTION_DOTDAMAGE,
 
+	SU_BASIC_SKILL = 5018,
+ 	SU_BITE,
+ 	SU_HIDE,
+ 	SU_SCRATCH,
+ 	SU_STOOP,
+ 	SU_LOPE,
+ 	SU_SPRITEMABLE,
+ 	SU_POWEROFLAND,
+ 	SU_SV_STEMSPEAR,
+ 	SU_CN_POWDERING,
+ 	SU_CN_METEOR,
+ 	SU_SV_ROOTTWIST,
+ 	SU_SV_ROOTTWIST_ATK,
+ 	SU_POWEROFLIFE,
+ 	SU_SCAROFTAROU,
+ 	SU_PICKYPECK,
+ 	SU_PICKYPECK_DOUBLE_ATK,
+ 	SU_ARCLOUSEDASH,
+ 	SU_LUNATICCARROTBEAT,
+ 	SU_POWEROFSEA,
+ 	SU_TUNABELLY,
+ 	SU_TUNAPARTY,
+ 	SU_BUNCHOFSHRIMP,
+ 	SU_FRESHSHRIMP,
+ 	SU_CN_METEOR_ATK,
+ 	SU_LUNATICCARROTBEAT_ATK,
+
 	HLIF_HEAL = 8001,
 	HLIF_AVOID,
 	HLIF_BRAIN,
@@ -1646,6 +1673,8 @@ enum {
 	UNT_GLITTERING_GREED,
 	UNT_B_TRAP,
 	UNT_FIRE_RAIN,
+	UNT_CATNIPPOWDER,
+ 	UNT_SV_ROOTTWIST,
 
 	/**
 	 * Guild Auras

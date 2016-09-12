@@ -13,8 +13,8 @@
 * Copyright (c) Hercules Dev Team                                            *
 * Copyright (c) Athena Dev Teams                                             *
 *                                                                            *
-* Licenciado sob a licença GNU GPL                                           *
-* Para mais informações leia o arquivo LICENSE na raíz do emulador           *
+* Licenciado sob a licenï¿½a GNU GPL                                           *
+* Para mais informaï¿½ï¿½es leia o arquivo LICENSE na raï¿½z do emulador           *
 *****************************************************************************/
 
 #ifndef MAP_BATTLE_H
@@ -482,6 +482,7 @@ struct Battle_Config {
 	int max_third_parameter;
 	int max_baby_third_parameter;
 	int max_extended_parameter;
+	int max_summoner_parameter;
 	int atcommand_max_stat_bypass;
 	int max_third_aspd;
 	int vcast_stat_scale;
@@ -544,18 +545,18 @@ struct Battle_Config {
 	int reserved_costume_id;
 
 	/** brAthena **/
-	// Configuração para a habilidade de revestimento total dos criadores. [CarlosHenrq]
+	// Configuraï¿½ï¿½o para a habilidade de revestimento total dos criadores. [CarlosHenrq]
 	int creator_fullprotect;
-	// Configuração para bloquear jogadores de abrir chat/vendas na mesma celula. [CarlosHenrq]
+	// Configuraï¿½ï¿½o para bloquear jogadores de abrir chat/vendas na mesma celula. [CarlosHenrq]
 	int vending_chat_block_same_cell;
 
-	// Configuração para bloquear jogadores de abrir chat/loja próximos uns aos outros. [CarlosHenrq]
+	// Configuraï¿½ï¿½o para bloquear jogadores de abrir chat/loja prï¿½ximos uns aos outros. [CarlosHenrq]
 	int vending_chat_block_range_check_cells;
 	int vending_chat_block_range_count_players;
 
 	int get_refine; // Block Refine - [Orce]
 	
-	// Configuração para habilidades de remover armas. [Sir Will]
+	// Configuraï¿½ï¿½o para habilidades de remover armas. [Sir Will]
 	int strip_weapon;
 };
 
