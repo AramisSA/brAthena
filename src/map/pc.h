@@ -1092,6 +1092,8 @@ END_ZEROED_BLOCK; /* End */
 	void (*update_idle_time) (struct map_session_data* sd, enum e_battle_config_idletime type);
 
 	int (*have_magnifier) (struct map_session_data *sd);
+	bool(*process_chat_message) (struct map_session_data *sd, const char *message);
+	void(*check_supernovice_call) (struct map_session_data *sd, const char *message);
 
 	// Configura��o para bloquear jogadores de abrir chat/loja pr�ximos uns aos outros. [CarlosHenrq]
 	int (*vending_chat_count_near) (struct map_session_data* sd);

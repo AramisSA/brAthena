@@ -5866,9 +5866,22 @@ int skill_castend_nodamage_id(struct block_list *src, struct block_list *bl, uin
 
 		case PR_KYRIE:
 		case MER_KYRIE:
+		case SU_TUNAPARTY:
 			clif->skill_nodamage(bl, bl, skill_id, -1,
 				sc_start(src, bl, type, 100, skill_lv, skill->get_time(skill_id, skill_lv)));
 			break;
+		case SU_FRESHSHRIMP:
+		case SU_ARCLOUSEDASH:
+			clif->skill_nodamage(src,bl,skill_id,skill_lv,
+				sc_start(src,bl,type,100,skill_lv,skill->get_time(skill_id,skill_lv)));
+			break;
+		// Works just like the above list of skills, except animation caused by
+ 		// status must trigger AFTER the skill cast animation or it will cancel
+ 		// out the status's animation.
+ 		case SU_STOOP:
+ 			clif->skill_nodamage(src,bl,skill_id,skill_lv,1);
+	 			sc_start(src,bl,type,100,skill_lv,skill->get_time(skill_id,skill_lv));
+ 			break;
 		//Passive Magnum, should had been casted on yourself.
 		case SM_MAGNUM:
 		case MS_MAGNUM:
@@ -8915,6 +8928,7 @@ int skill_castend_nodamage_id(struct block_list *src, struct block_list *bl, uin
 		case LG_TRAMPLE:
 			clif->skill_damage(src,bl,tick, status_get_amotion(src), 0, -30000, 1, skill_id, skill_lv, BDT_SKILL);
 			map->foreachinrange(skill->destroy_trap,bl,skill->get_splash(skill_id,skill_lv),BL_SKILL,tick);
+			status_change_end(bl, SC_SV_ROOTTWIST, INVALID_TIMER);
 			break;
 
 		case LG_REFLECTDAMAGE:
@@ -9443,6 +9457,37 @@ int skill_castend_nodamage_id(struct block_list *src, struct block_list *bl, uin
 			clif->skill_nodamage(src,bl,skill_id,skill_lv,1);
 			clif->skill_damage(src,bl,tick, status_get_amotion(src), 0, 0, 1, skill_id, -2, BDT_SKILL);
 			break;
+
+		case SU_HIDE:
+ 			if (tsce) {
+ 				clif->skill_nodamage(src,bl,skill_id,skill_lv,1);
+ 				status_change_end(bl, type, INVALID_TIMER);
+ 				map->freeblock_unlock();
+ 				return 0;
+ 			}
+ 			clif->skill_nodamage(src,bl,skill_id,skill_lv,1);
+ 			sc_start(src,bl,type,100,skill_lv,skill->get_time(skill_id,skill_lv));
+ 			break;
+ 
+ 		case SU_TUNABELLY:
+ 		{
+ 			int heal;
+ 			if (!dstmd || dstmd->class_ != MOBID_EMPELIUM || !mob_is_battleground(dstmd)) {
+ 				heal = ((2 * skill_lv - 1) * 10) * status_get_max_hp(bl) / 100;
+ 				status->heal(bl, heal, 0, 0);
+ 			}
+ 
+ 			clif->skill_nodamage(src, bl, skill_id, heal, 1);
+ 		}
+ 			break;
+ 
+ 		case SU_BUNCHOFSHRIMP:
+ 			if (sd == NULL || sd->status.party_id == 0 || flag&1)
+ 				clif->skill_nodamage(bl, bl, skill_id, skill_lv, sc_start(src, bl, type, 100, skill_lv, skill->get_time(skill_id, skill_lv)));
+ 			else if (sd)
+ 				party->foreachsamemap(skill->area_sub, sd, skill->get_splash(skill_id, skill_lv), src, skill_id, skill_lv, tick, flag|BCT_PARTY|1, skill->castend_nodamage_id);
+ 			break;
+ 
 
 		case GM_SANDMAN:
 			if( tsc ) {
@@ -10332,6 +10377,7 @@ int skill_castend_pos2(struct block_list* src, int x, int y, uint16 skill_id, ui
 		case HW_GANBANTEIN:
 		case LG_EARTHDRIVE:
 		case SC_ESCAPE:
+		case SU_CN_METEOR:
 			break; //Effect is displayed on respective switch case.
 		default:
 			skill->castend_pos2_effect_unknown(src, &x, &y, &skill_id, &skill_lv, &tick, &flag);
@@ -10518,6 +10564,8 @@ int skill_castend_pos2(struct block_list* src, int x, int y, uint16 skill_id, ui
 		case SO_ELEMENTAL_SHIELD:
 		case RL_B_TRAP:
 		case MH_XENO_SLASHER:
+		case SU_CN_POWDERING:
+ 		case SU_SV_ROOTTWIST:
 			flag|=1;//Set flag to 1 to prevent deleting ammo (it will be deleted on group-delete).
 		case GS_GROUNDDRIFT: //Ammo should be deleted right away.
 			if ( skill_id == WM_SEVERE_RAINSTORM )

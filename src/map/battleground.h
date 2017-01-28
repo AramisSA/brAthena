@@ -13,8 +13,8 @@
 * Copyright (c) Hercules Dev Team                                            *
 * Copyright (c) Athena Dev Teams                                             *
 *                                                                            *
-* Licenciado sob a licença GNU GPL                                           *
-* Para mais informações leia o arquivo LICENSE na raíz do emulador           *
+* Licenciado sob a licenï¿½a GNU GPL                                           *
+* Para mais informaï¿½ï¿½es leia o arquivo LICENSE na raï¿½z do emulador           *
 *****************************************************************************/
 
 #ifndef MAP_BATTLEGROUND_H
@@ -127,7 +127,7 @@ struct battleground_interface {
 	bool (*member_respawn) (struct map_session_data *sd);
 	int (*create) (unsigned short map_index, short rx, short ry, const char *ev, const char *dev);
 	int (*team_get_id) (struct block_list *bl);
-	bool (*send_message) (struct map_session_data *sd, const char *mes, int len);
+	bool (*send_message) (struct map_session_data *sd, const char *mes);
 	int (*send_xy_timer_sub) (DBKey key, DBData *data, va_list ap);
 	int (*send_xy_timer) (int tid, int64 tick, int id, intptr_t data);
 	int (*afk_timer) (int tid, int64 tick, int id, intptr_t data);
